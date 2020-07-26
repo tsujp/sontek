@@ -17,32 +17,45 @@ Backpace / h
 
 ## Usage
 
-Call `select_option` and Sontek handles the rest, with the following
-prerequisites.
+1. Ensure the [prerequisites](#prerequisites) after this block are met.
+2. Source in Sontek, `source "path/to/sontek.bash"`.
+3. Determine the absolute path to a directory following [`defs` pattern](#defs-directory).
+4. Call `select_option "$path"` (e.g., `$path` evaluates to that directory).
 
-Sontek accepts no explicit arguments because configurations for various hosts
-are typically split up into many bash scripts, so in order to remove duplicating
-efforts the structure of these directories is used to construct the menu
-presented.
+[Example usage in my dotfiles repo can be found here within `setup.bash`](https://github.com/tsujp/dotfiles/tree/master/meta-config).
 
-The expected directory tree is a directory named `defs` for which each subdirectory is a menu category. When a subdirectory with only files is reached said subdirectory represents the final option in the chain which then has its contents presented as menu choices beneath those subdirectories.
 
-In the following N refers to the set of ISO 80000-2 natural numbers (i.e. 0, 1,
-2 ...).
+### Prerequisites
 
-Directories are named `N_NAME` to allow ordered presentation. The prefix and
-underscore are both removed from display.
+*Note*
+- In the following N refers to the set of ISO 80000-2 natural numbers (i.e.
+0, 1, 2 ...).
+- Naming conventions involving `N-` have the preceeding integer and hyphen
+stripped from display.
 
-The files within the terminal directory are named `N_NAME.sh` and represent
-both the order of execution as well as presentation in Sontek. The prefix and
-underscore are both removed from display.
+#### `defs` directory
 
-Specially named directories `_common` as well as empty directories are ignored.
+- A directory for which each subdirectory is a menu category.
+- When a subdirectory with only files is reached said subdirectory represents
+the final option in the chain which then has its contents presented as menu choices beneath those subdirectories.
+
+#### Directory names
+
+- Directories are named `N-NAME` to allow ordered presentation.
+
+#### File names
+
+- The files within the terminal directory are named `N-NAME.bash` and represent
+both the order of execution as well as presentation in Sontek.
+
+#### Extra
+
+- Specially named directories `-common` as well as empty directories are
+ignored.
+
+
+### Example
 
 ```
-put example here
+todo
 ```
-
-
-## TODO
-print warnings if no permissions to execute script
