@@ -1,6 +1,6 @@
 # Sontek
 
-Renders a paged, text based list of options that can be selected by the user.
+Bash only paged menu selection.
 
 ## Supported keys
 
