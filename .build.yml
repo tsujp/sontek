@@ -3,8 +3,11 @@ sources:
   - https://git.sr.ht/~tsujp/sontek
 secrets:
   - d68a625f-3652-4549-8d70-ebe42b440f41
+  - 787ae59e-68bb-4a77-adb8-9a5c2323e5af
+  - 5bf344dd-bd4c-4cb2-aa21-4372907e5213
 tasks:
   - mirror-to-github: |
+      sudo apk add jq
       mkdir -p ~/.ssh
 
       cd sontek
@@ -27,6 +30,25 @@ tasks:
       # TODO: contribute to `builds` and get repo names nicely passed into environment; for now leave hardcoded
       git remote add github git@github.com:tsujp/sontek.git
       git push --prune github +refs/heads/*:refs/heads/* +refs/tags/*:refs/tags/*
+
+      set +x
+      SOURCEHUT_PAT=$(cat ~/.srhtpat)
+      DESCRIPTION=$(curl \
+        -H "Authorization: Bearer $SOURCEHUT_PAT" \
+        -H 'Content-Type: application/json' \
+        https://git.sr.ht/query \
+        -d '{"query": "{ repositoryByName (name: \"sontek\") { description } }"}' | jq -r .data.repositoryByName.description)
+
+      # set repo description and url
+      NEW_DESCRIPTION=$(jq -nc --arg desc "$DESCRIPTION" '{description:"[MIRROR] \($desc)",homepage:"https://git.sr.ht/~tsujp/sontek"}')
+      echo $NEW_DESCRIPTION
+      curl \
+        -X PATCH \
+        -H 'Accept: application/vnd.github.v3+json' \
+        https://api.github.com/repos/tsujp/sontek \
+        -u "tsujp:$(cat ~/.ghpat)" \
+        -d "$NEW_DESCRIPTION"
+      set -x
 
 # TODO: suck this out, also stop is pushing HEAD as a branch
 # refspec src then colon then dest, e.g. src:dest
